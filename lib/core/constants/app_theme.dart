@@ -66,8 +66,7 @@ abstract class AppTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide:
-              const BorderSide(color: AppColors.primary, width: 1.5),
+          borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
         ),
         hintStyle: const TextStyle(
           fontFamily: 'Inter',
@@ -135,31 +134,32 @@ abstract class AppTheme {
         : AppColors.darkTextPrimary;
 
     return TextTheme(
-      displayLarge: GoogleFonts.nunito(
-          fontWeight: FontWeight.w800, color: baseColor),
-      displayMedium: GoogleFonts.nunito(
-          fontWeight: FontWeight.w700, color: baseColor),
-      displaySmall: GoogleFonts.nunito(
-          fontWeight: FontWeight.w700, color: baseColor),
-      headlineLarge: GoogleFonts.nunito(
-          fontWeight: FontWeight.w700, color: baseColor),
-      headlineMedium: GoogleFonts.nunito(
-          fontWeight: FontWeight.w700, color: baseColor),
-      headlineSmall: GoogleFonts.nunito(
-          fontWeight: FontWeight.w600, color: baseColor),
-      titleLarge: GoogleFonts.nunito(
-          fontWeight: FontWeight.w700, color: baseColor),
-      titleMedium: GoogleFonts.nunito(
-          fontWeight: FontWeight.w600, color: baseColor),
-      titleSmall: GoogleFonts.nunito(
-          fontWeight: FontWeight.w600, color: baseColor),
+      displayLarge:
+          GoogleFonts.nunito(fontWeight: FontWeight.w800, color: baseColor),
+      displayMedium:
+          GoogleFonts.nunito(fontWeight: FontWeight.w700, color: baseColor),
+      displaySmall:
+          GoogleFonts.nunito(fontWeight: FontWeight.w700, color: baseColor),
+      headlineLarge:
+          GoogleFonts.nunito(fontWeight: FontWeight.w700, color: baseColor),
+      headlineMedium:
+          GoogleFonts.nunito(fontWeight: FontWeight.w700, color: baseColor),
+      headlineSmall:
+          GoogleFonts.nunito(fontWeight: FontWeight.w600, color: baseColor),
+      titleLarge:
+          GoogleFonts.nunito(fontWeight: FontWeight.w700, color: baseColor),
+      titleMedium:
+          GoogleFonts.nunito(fontWeight: FontWeight.w600, color: baseColor),
+      titleSmall:
+          GoogleFonts.nunito(fontWeight: FontWeight.w600, color: baseColor),
       bodyLarge: GoogleFonts.inter(color: baseColor),
       bodyMedium: GoogleFonts.inter(color: baseColor),
       bodySmall: GoogleFonts.inter(
           color: brightness == Brightness.light
               ? AppColors.textSecondary
               : AppColors.darkTextSecondary),
-      labelLarge: GoogleFonts.inter(fontWeight: FontWeight.w500, color: baseColor),
+      labelLarge:
+          GoogleFonts.inter(fontWeight: FontWeight.w500, color: baseColor),
       labelMedium: GoogleFonts.inter(color: baseColor),
       labelSmall: GoogleFonts.inter(color: baseColor),
     );

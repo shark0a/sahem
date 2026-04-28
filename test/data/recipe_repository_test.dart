@@ -12,7 +12,9 @@ import 'package:sahem/domain/entities/recipe.dart';
 
 // ── Mocks ──────────────────────────────────────────────────────────────────
 class MockRemoteDatasource extends Mock implements RecipeRemoteDatasource {}
+
 class MockLocalDatasource extends Mock implements RecipeLocalDatasource {}
+
 class MockNetworkInfo extends Mock implements NetworkInfo {}
 
 // ── Helpers ────────────────────────────────────────────────────────────────
@@ -96,8 +98,8 @@ void main() {
 
     test('returns ServerFailure when remote throws ServerException', () async {
       when(() => mockNetworkInfo.isConnected).thenAnswer((_) async => true);
-      when(() => mockRemote.getByCategory(category))
-          .thenThrow(const ServerException(statusCode: 500, message: 'Server Error'));
+      when(() => mockRemote.getByCategory(category)).thenThrow(
+          const ServerException(statusCode: 500, message: 'Server Error'));
 
       final result = await repository.getSuggestedRecipes(category);
 
@@ -186,7 +188,8 @@ void main() {
     });
 
     test('returns false when recipe is removed from favorites', () async {
-      when(() => mockLocal.toggleFavorite(any())).thenAnswer((_) async => false);
+      when(() => mockLocal.toggleFavorite(any()))
+          .thenAnswer((_) async => false);
 
       final result = await repository.toggleFavorite(recipe);
 

@@ -9,7 +9,8 @@ class LocationService {
       // 1. Check if location services are enabled
       final serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
-        return const Left(LocationFailure(message: 'Location services disabled'));
+        return const Left(
+            LocationFailure(message: 'Location services disabled'));
       }
 
       // 2. Check & request permission
@@ -38,7 +39,8 @@ class LocationService {
       );
 
       if (placemarks.isEmpty || placemarks.first.isoCountryCode == null) {
-        return const Left(LocationFailure(message: 'Could not determine country'));
+        return const Left(
+            LocationFailure(message: 'Could not determine country'));
       }
 
       return Right(placemarks.first.isoCountryCode!);

@@ -17,11 +17,13 @@ void main() {
 
     test('MealType enum contains all three meal types', () {
       expect(MealType.values.length, equals(3));
-      expect(MealType.values, containsAll([
-        MealType.breakfast,
-        MealType.lunch,
-        MealType.dinner,
-      ]));
+      expect(
+          MealType.values,
+          containsAll([
+            MealType.breakfast,
+            MealType.lunch,
+            MealType.dinner,
+          ]));
     });
 
     test('getMealTypeLabel returns non-empty string', () {

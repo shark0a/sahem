@@ -4,6 +4,7 @@ import 'package:sahem/core/services/network_info.dart';
 import 'package:sahem/core/utils/context_helper.dart';
 import 'package:sahem/domain/usecases/get_suggested_recipes.dart';
 import 'home_state.dart';
+
 class HomeCubit extends Cubit<HomeState> {
   final GetSuggestedRecipes _getSuggestedRecipes;
   final LocationService _locationService;

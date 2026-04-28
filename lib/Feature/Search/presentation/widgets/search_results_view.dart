@@ -40,7 +40,7 @@ class SearchResultsView extends StatelessWidget {
     }
 
     if (state is SearchEmpty) {
-      return const  EmptyStateWidget(
+      return const EmptyStateWidget(
         title: AppStrings.noRecipesFound,
         subtitle: AppStrings.tryAnother,
         icon: Icons.no_food,

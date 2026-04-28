@@ -64,7 +64,8 @@ abstract class AppStrings {
   static const String unknownError = 'Something went wrong.';
 
   // Offline
-  static const String offlineMessage = 'You\'re offline — showing cached recipes';
+  static const String offlineMessage =
+      'You\'re offline — showing cached recipes';
   static const String backOnline = 'Back online!';
 
   // Empty States
@@ -72,7 +73,8 @@ abstract class AppStrings {
   static const String emptySearchSubtitle =
       'We couldn\'t find a match. Try a different search!';
   static const String emptyFavoritesTitle = 'No favorites yet!';
-  static const String emptyFavoritesSubtitle = 'Tap ❤️ on a recipe to save it here.';
+  static const String emptyFavoritesSubtitle =
+      'Tap ❤️ on a recipe to save it here.';
 
   // Location
   static const String locationDetecting = 'Detecting location...';

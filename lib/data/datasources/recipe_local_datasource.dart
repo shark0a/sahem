@@ -1,6 +1,7 @@
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:sahem/core/errors/exceptions.dart';
 import 'package:sahem/data/models/recipe_model.dart';
+
 class RecipeLocalDatasource {
   final HiveInterface _hive;
 
@@ -25,8 +26,7 @@ class RecipeLocalDatasource {
   Future<List<RecipeModel>> getCachedRecipes(String category) async {
     try {
       final values = _cacheBox.values
-          .where((r) =>
-              r.category?.toLowerCase() == category.toLowerCase())
+          .where((r) => r.category?.toLowerCase() == category.toLowerCase())
           .toList();
       if (values.isEmpty) throw CacheException(message: 'No cache found');
       return values;

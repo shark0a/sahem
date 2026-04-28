@@ -124,7 +124,8 @@ class _SearchScreenState extends State<SearchScreen> {
   void _handleSearchChanged(String value) {
     setState(() {
       if (value.trim().isEmpty) {
-        _activeFilter = _searchRestoreFilter ?? _categoryToFilter(_selectedCategory);
+        _activeFilter =
+            _searchRestoreFilter ?? _categoryToFilter(_selectedCategory);
         _searchRestoreFilter = _activeFilter;
       } else {
         _searchRestoreFilter ??= _activeFilter;
@@ -137,7 +138,8 @@ class _SearchScreenState extends State<SearchScreen> {
   void _handleClearSearch() {
     _controller.clear();
     setState(() {
-      _activeFilter = _searchRestoreFilter ?? _categoryToFilter(_selectedCategory);
+      _activeFilter =
+          _searchRestoreFilter ?? _categoryToFilter(_selectedCategory);
       _searchRestoreFilter = _activeFilter;
     });
     context.read<SearchCubit>().clearSearch();

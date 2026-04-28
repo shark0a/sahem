@@ -152,7 +152,8 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen>
                 width: 56,
                 height: 56,
                 decoration: BoxDecoration(
-                  color: _isFavorited ? AppColors.heartActive : AppColors.primary,
+                  color:
+                      _isFavorited ? AppColors.heartActive : AppColors.primary,
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
@@ -330,7 +331,8 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen>
                       shape: BoxShape.circle,
                       color: isChecked ? AppColors.primary : Colors.transparent,
                       border: Border.all(
-                        color: isChecked ? AppColors.primary : AppColors.textHint,
+                        color:
+                            isChecked ? AppColors.primary : AppColors.textHint,
                         width: 2,
                       ),
                     ),
@@ -376,8 +378,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen>
       return const Center(
         child: Text(
           'No instructions available.',
-          style: TextStyle(
-              fontFamily: 'Inter', color: AppColors.textSecondary),
+          style: TextStyle(fontFamily: 'Inter', color: AppColors.textSecondary),
         ),
       );
     }
@@ -439,8 +440,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen>
         .toList();
   }
 
-  Widget _circleButton(
-      {required Widget child, required VoidCallback onTap}) {
+  Widget _circleButton({required Widget child, required VoidCallback onTap}) {
     return GestureDetector(
       onTap: onTap,
       child: Container(

@@ -12,8 +12,11 @@ import 'package:sahem/Feature/Home/presentation/bloc/home_cubit.dart';
 import 'package:sahem/Feature/Home/presentation/bloc/home_state.dart';
 
 class MockGetSuggestedRecipes extends Mock implements GetSuggestedRecipes {}
+
 class MockLocationService extends Mock implements LocationService {}
+
 class MockNetworkInfo extends Mock implements NetworkInfo {}
+
 class MockContextHelper extends Mock implements ContextHelper {}
 
 const _recipe = Recipe(

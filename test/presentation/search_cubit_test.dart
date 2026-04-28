@@ -10,6 +10,7 @@ import 'package:sahem/Feature/Search/presentation/bloc/search_cubit.dart';
 import 'package:sahem/Feature/Search/presentation/bloc/search_state.dart';
 
 class MockSearchRecipes extends Mock implements SearchRecipes {}
+
 class MockGetSuggestedRecipes extends Mock implements GetSuggestedRecipes {}
 
 const _recipe = Recipe(

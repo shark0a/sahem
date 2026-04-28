@@ -7,6 +7,7 @@ import '../../domain/repositories/recipe_repository.dart';
 import '../datasources/recipe_local_datasource.dart';
 import '../datasources/recipe_remote_datasource.dart';
 import '../models/recipe_model.dart';
+
 class RecipeRepositoryImpl implements RecipeRepository {
   final RecipeRemoteDatasource _remote;
   final RecipeLocalDatasource _local;
@@ -51,8 +52,7 @@ class RecipeRepositoryImpl implements RecipeRepository {
       try {
         final all = await _local.getCachedRecipes('');
         final filtered = all
-            .where((r) =>
-                r.name.toLowerCase().contains(query.toLowerCase()))
+            .where((r) => r.name.toLowerCase().contains(query.toLowerCase()))
             .toList();
         return Right(filtered.map((e) => e.toEntity()).toList());
       } on CacheException {

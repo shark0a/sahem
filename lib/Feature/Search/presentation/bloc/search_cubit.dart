@@ -20,8 +20,9 @@ class SearchCubit extends Cubit<SearchState> {
     String? initialCategory,
   }) : super(SearchInitial()) {
     final trimmedCategory = initialCategory?.trim();
-    _activeCategory =
-        trimmedCategory == null || trimmedCategory.isEmpty ? null : trimmedCategory;
+    _activeCategory = trimmedCategory == null || trimmedCategory.isEmpty
+        ? null
+        : trimmedCategory;
 
     _subscription = _searchController.stream
         .debounceTime(const Duration(milliseconds: 400))

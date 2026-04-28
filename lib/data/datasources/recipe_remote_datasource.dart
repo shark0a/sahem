@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import '../../core/constants/api_endpoints.dart';
 import '../../core/errors/exceptions.dart';
 import '../models/recipe_model.dart';
+
 class RecipeRemoteDatasource {
   final Dio _dio;
 
@@ -19,10 +20,8 @@ class RecipeRemoteDatasource {
 
       // TheMealDB filter endpoint returns partial models (id + name + thumb)
       // We fetch details for the first 10 to keep it performant
-      final partialList = (meals as List)
-          .take(10)
-          .map((m) => m['idMeal'].toString())
-          .toList();
+      final partialList =
+          (meals as List).take(10).map((m) => m['idMeal'].toString()).toList();
 
       final detailed = await Future.wait(
         partialList.map((id) => _fetchById(id)),

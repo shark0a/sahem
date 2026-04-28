@@ -1,5 +1,5 @@
-
 enum MealType { breakfast, lunch, dinner }
+
 class ContextHelper {
   MealType getMealType() {
     final hour = DateTime.now().hour;

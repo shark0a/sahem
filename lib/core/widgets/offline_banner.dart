@@ -33,10 +33,7 @@ class OfflineBanner extends StatelessWidget {
                   ),
                 ],
               ),
-            )
-              .animate()
-              .slideY(begin: -1, duration: 300.ms)
-              .fadeIn()
+            ).animate().slideY(begin: -1, duration: 300.ms).fadeIn()
           : const SizedBox.shrink(key: ValueKey('online')),
     );
   }

@@ -20,7 +20,8 @@ class HomeScreen extends StatelessWidget {
         builder: (context, state) {
           return Column(
             children: [
-              if (state is HomeLoaded) OfflineBanner(isOffline: state.isOffline),
+              if (state is HomeLoaded)
+                OfflineBanner(isOffline: state.isOffline),
               Expanded(
                 child: RefreshIndicator(
                   color: AppColors.primary,
