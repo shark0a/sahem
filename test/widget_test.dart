@@ -50,7 +50,8 @@ void main() {
       sl.registerLazySingleton<LocationService>(() => LocationService());
     }
     if (!sl.isRegistered<NetworkInfo>()) {
-      sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl<Connectivity>()));
+      sl.registerLazySingleton<NetworkInfo>(
+          () => NetworkInfoImpl(sl<Connectivity>()));
     }
     if (!sl.isRegistered<ContextHelper>()) {
       sl.registerLazySingleton<ContextHelper>(() => ContextHelper());
@@ -59,54 +60,60 @@ void main() {
       sl.registerLazySingleton<Connectivity>(() => Connectivity());
     }
     if (!sl.isRegistered<Dio>()) {
-      sl.registerLazySingleton<Dio>(() => DioClient.create(baseUrl: ApiEndpoints.baseUrl));
+      sl.registerLazySingleton<Dio>(
+          () => DioClient.create(baseUrl: ApiEndpoints.baseUrl));
     }
     if (!sl.isRegistered<RecipeRemoteDatasource>()) {
-      sl.registerLazySingleton<RecipeRemoteDatasource>(() => RecipeRemoteDatasource(sl<Dio>()));
+      sl.registerLazySingleton<RecipeRemoteDatasource>(
+          () => RecipeRemoteDatasource(sl<Dio>()));
     }
     if (!sl.isRegistered<RecipeLocalDatasource>()) {
-      sl.registerLazySingleton<RecipeLocalDatasource>(() => RecipeLocalDatasource(sl<HiveInterface>()));
+      sl.registerLazySingleton<RecipeLocalDatasource>(
+          () => RecipeLocalDatasource(sl<HiveInterface>()));
     }
     if (!sl.isRegistered<RecipeRepository>()) {
       sl.registerLazySingleton<RecipeRepository>(() => RecipeRepositoryImpl(
-        sl<RecipeRemoteDatasource>(),
-        sl<RecipeLocalDatasource>(),
-        sl<NetworkInfo>(),
-      ));
+            sl<RecipeRemoteDatasource>(),
+            sl<RecipeLocalDatasource>(),
+            sl<NetworkInfo>(),
+          ));
     }
     if (!sl.isRegistered<GetSuggestedRecipes>()) {
-      sl.registerLazySingleton<GetSuggestedRecipes>(() => GetSuggestedRecipes(sl<RecipeRepository>()));
+      sl.registerLazySingleton<GetSuggestedRecipes>(
+          () => GetSuggestedRecipes(sl<RecipeRepository>()));
     }
     if (!sl.isRegistered<SearchRecipes>()) {
-      sl.registerLazySingleton<SearchRecipes>(() => SearchRecipes(sl<RecipeRepository>()));
+      sl.registerLazySingleton<SearchRecipes>(
+          () => SearchRecipes(sl<RecipeRepository>()));
     }
     if (!sl.isRegistered<GetFavorites>()) {
-      sl.registerLazySingleton<GetFavorites>(() => GetFavorites(sl<RecipeRepository>()));
+      sl.registerLazySingleton<GetFavorites>(
+          () => GetFavorites(sl<RecipeRepository>()));
     }
     if (!sl.isRegistered<ToggleFavorite>()) {
-      sl.registerLazySingleton<ToggleFavorite>(() => ToggleFavorite(sl<RecipeRepository>()));
+      sl.registerLazySingleton<ToggleFavorite>(
+          () => ToggleFavorite(sl<RecipeRepository>()));
     }
     if (!sl.isRegistered<HomeCubit>()) {
       sl.registerLazySingleton<HomeCubit>(() => HomeCubit(
-        sl<GetSuggestedRecipes>(),
-        sl<LocationService>(),
-        sl<NetworkInfo>(),
-        sl<ContextHelper>(),
-      ));
+            sl<GetSuggestedRecipes>(),
+            sl<LocationService>(),
+            sl<NetworkInfo>(),
+            sl<ContextHelper>(),
+          ));
     }
     if (!sl.isRegistered<SearchCubit>()) {
       sl.registerLazySingleton<SearchCubit>(() => SearchCubit(
-        sl<SearchRecipes>(),
-        sl<GetSuggestedRecipes>(),
-      ));
+            sl<SearchRecipes>(),
+            sl<GetSuggestedRecipes>(),
+          ));
     }
     if (!sl.isRegistered<FavoritesCubit>()) {
       sl.registerLazySingleton<FavoritesCubit>(() => FavoritesCubit(
-        sl<GetFavorites>(),
-        sl<ToggleFavorite>(),
-      ));
+            sl<GetFavorites>(),
+            sl<ToggleFavorite>(),
+          ));
     }
-
 
     // Build our app
     await tester.pumpWidget(const SahemApp());
