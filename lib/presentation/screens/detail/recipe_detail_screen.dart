@@ -49,13 +49,12 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen>
       backgroundColor: AppColors.background,
       body: Stack(
         children: [
-          CustomScrollView(
-            slivers: [
-              SliverToBoxAdapter(
-                child: _buildHeroImage(context, recipe),
-              ),
-              SliverToBoxAdapter(
-                child: Padding(
+          SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildHeroImage(context, recipe),
+                Padding(
                   padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -76,23 +75,22 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen>
                     ],
                   ),
                 ),
-              ),
-              SliverFillRemaining(
-                hasScrollBody: false,
-                child: Padding(
+                Padding(
                   padding: const EdgeInsets.fromLTRB(20, 16, 20, 120),
                   child: AnimatedBuilder(
                     animation: _tabController,
                     builder: (context, _) {
-                      if (_tabController.index == 0) {
-                        return _buildIngredients(recipe);
-                      }
-                      return _buildInstructions(instructions);
+                      return AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 200),
+                        child: _tabController.index == 0
+                            ? _buildIngredients(recipe)
+                            : _buildInstructions(instructions),
+                      );
                     },
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
 
           // Back button
@@ -263,96 +261,103 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen>
 
   Widget _buildIngredients(Recipe recipe) {
     final pairs = recipe.ingredientMeasurePairs;
-    return ListView.separated(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: pairs.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 10),
-      itemBuilder: (context, index) {
+    if (pairs.isEmpty) {
+      return const Text(
+        'No ingredients available.',
+        style: TextStyle(
+          fontFamily: 'Inter',
+          color: AppColors.textSecondary,
+        ),
+      );
+    }
+
+    return Column(
+      children: List.generate(pairs.length, (index) {
         final pair = pairs[index];
         final isChecked = _checkedIngredients.contains(index);
-        return GestureDetector(
-          onTap: () {
-            setState(() {
-              if (isChecked) {
-                _checkedIngredients.remove(index);
-              } else {
-                _checkedIngredients.add(index);
-              }
-            });
-          },
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 150),
-            padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
-              color: isChecked
-                  ? AppColors.primary.withOpacity(0.06)
-                  : AppColors.surface,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
+        return Padding(
+          padding: EdgeInsets.only(bottom: index == pairs.length - 1 ? 0 : 10),
+          child: GestureDetector(
+            onTap: () {
+              setState(() {
+                if (isChecked) {
+                  _checkedIngredients.remove(index);
+                } else {
+                  _checkedIngredients.add(index);
+                }
+              });
+            },
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 150),
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
                 color: isChecked
-                    ? AppColors.primary.withOpacity(0.3)
-                    : Colors.transparent,
+                    ? AppColors.primary.withOpacity(0.06)
+                    : AppColors.surface,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: isChecked
+                      ? AppColors.primary.withOpacity(0.3)
+                      : Colors.transparent,
+                ),
+                boxShadow: isChecked
+                    ? []
+                    : const [
+                        BoxShadow(
+                          color: Color(0x08000000),
+                          blurRadius: 8,
+                          offset: Offset(0, 2),
+                        ),
+                      ],
               ),
-              boxShadow: isChecked
-                  ? []
-                  : const [
-                      BoxShadow(
-                        color: Color(0x08000000),
-                        blurRadius: 8,
-                        offset: Offset(0, 2),
+              child: Row(
+                children: [
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 150),
+                    width: 22,
+                    height: 22,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: isChecked ? AppColors.primary : Colors.transparent,
+                      border: Border.all(
+                        color: isChecked ? AppColors.primary : AppColors.textHint,
+                        width: 2,
                       ),
-                    ],
-            ),
-            child: Row(
-              children: [
-                AnimatedContainer(
-                  duration: const Duration(milliseconds: 150),
-                  width: 22,
-                  height: 22,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: isChecked ? AppColors.primary : Colors.transparent,
-                    border: Border.all(
-                      color: isChecked
-                          ? AppColors.primary
-                          : AppColors.textHint,
-                      width: 2,
+                    ),
+                    child: isChecked
+                        ? const Icon(Icons.check, size: 14, color: Colors.white)
+                        : null,
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Text(
+                      pair['ingredient'] ?? '',
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontSize: 14,
+                        color: isChecked
+                            ? AppColors.textHint
+                            : AppColors.textPrimary,
+                        decoration:
+                            isChecked ? TextDecoration.lineThrough : null,
+                      ),
                     ),
                   ),
-                  child: isChecked
-                      ? const Icon(Icons.check, size: 14, color: Colors.white)
-                      : null,
-                ),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: Text(
-                    pair['ingredient'] ?? '',
-                    style: TextStyle(
+                  Text(
+                    pair['measure'] ?? '',
+                    style: const TextStyle(
                       fontFamily: 'Inter',
-                      fontSize: 14,
-                      color: isChecked
-                          ? AppColors.textHint
-                          : AppColors.textPrimary,
-                      decoration:
-                          isChecked ? TextDecoration.lineThrough : null,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.primary,
                     ),
                   ),
-                ),
-                Text(
-                  pair['measure'] ?? '',
-                  style: const TextStyle(
-                    fontFamily: 'Inter',
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.primary,
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ).animate().fadeIn(delay: (index * 40).ms);
-      },
+          ).animate().fadeIn(delay: (index * 40).ms),
+        );
+      }),
     );
   }
 
@@ -367,13 +372,11 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen>
       );
     }
 
-    return ListView.separated(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: steps.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 16),
-      itemBuilder: (context, index) {
-        return Row(
+    return Column(
+      children: List.generate(steps.length, (index) {
+        return Padding(
+          padding: EdgeInsets.only(bottom: index == steps.length - 1 ? 0 : 16),
+          child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
@@ -411,8 +414,9 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen>
               ),
             ),
           ],
-        ).animate().fadeIn(delay: (index * 60).ms).slideX(begin: 0.1);
-      },
+        ).animate().fadeIn(delay: (index * 60).ms).slideX(begin: 0.1),
+        );
+      }),
     );
   }
 

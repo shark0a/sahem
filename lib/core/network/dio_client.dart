@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
-import '../errors/exceptions.dart';
+
+import 'package:sahem/core/errors/exceptions.dart';
+import 'package:sahem/core/network/cache_interceptor.dart';
 
 class DioClient {
   DioClient._();
@@ -22,18 +24,16 @@ class DioClient {
     final cacheOptions = CacheOptions(
       store: MemCacheStore(),
       policy: CachePolicy.forceCache,
-      maxStale: const Stale(Duration(hours: 1)),
-      priority: CachePriority.normal,
+      maxStale: const Duration(hours: 1),
     );
 
     dio.interceptors.addAll([
+      AppCacheInterceptor(options: cacheOptions),
       DioCacheInterceptor(options: cacheOptions),
       LogInterceptor(
         requestBody: false,
-        responseBody: false,
         requestHeader: false,
         responseHeader: false,
-        error: true,
       ),
       _ErrorInterceptor(),
     ]);
@@ -49,7 +49,7 @@ class _ErrorInterceptor extends Interceptor {
       case DioExceptionType.connectionTimeout:
       case DioExceptionType.sendTimeout:
       case DioExceptionType.receiveTimeout:
-        throw NetworkException(message: 'Connection timed out');
+        throw const NetworkException(message: 'Connection timed out');
       case DioExceptionType.badResponse:
         throw ServerException(
           statusCode: err.response?.statusCode,

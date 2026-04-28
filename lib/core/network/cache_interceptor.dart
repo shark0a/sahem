@@ -9,15 +9,16 @@ class AppCacheInterceptor extends Interceptor {
   AppCacheInterceptor({required this.options});
 
   @override
-  void onRequest(
-      RequestOptions request, RequestInterceptorHandler handler) {
-    // Force network on POST/PUT/DELETE — only cache GETs
-    if (request.method != 'GET') {
+  void onRequest(RequestOptions request, RequestInterceptorHandler handler) {
+    if (request.method.toUpperCase() == 'GET') {
       request.extra = {
         ...request.extra,
-        DioCacheInterceptor.extraKey: options.copyWith(
-          policy: CachePolicy.noCache,
-        ),
+        ...options.toExtra(),
+      };
+    } else {
+      request.extra = {
+        ...request.extra,
+        ...options.copyWith(policy: CachePolicy.noCache).toExtra(),
       };
     }
     handler.next(request);

@@ -1,6 +1,6 @@
 import 'package:hive_flutter/hive_flutter.dart';
-import '../../core/errors/exceptions.dart';
-import '../models/recipe_model.dart';
+import 'package:sahem/core/errors/exceptions.dart';
+import 'package:sahem/data/models/recipe_model.dart';
 class RecipeLocalDatasource {
   final HiveInterface _hive;
 

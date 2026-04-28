@@ -4,25 +4,25 @@ import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
-import '../../data/datasources/recipe_local_datasource.dart';
-import '../../data/datasources/recipe_remote_datasource.dart';
-import '../../data/models/recipe_model.dart';
-import '../../data/repositories/recipe_repository_impl.dart';
-import '../../domain/repositories/recipe_repository.dart';
-import '../../domain/usecases/get_favorites.dart';
-import '../../domain/usecases/get_suggested_recipes.dart';
-import '../../domain/usecases/search_recipes.dart';
-import '../../domain/usecases/toggle_favorite.dart';
-import '../../presentation/cubits/favorites/favorites_cubit.dart';
-import '../../presentation/cubits/home/home_cubit.dart';
-import '../../presentation/cubits/search/search_cubit.dart';
-import '../../presentation/router/app_router.dart';
-import '../constants/api_endpoints.dart';
-import '../network/dio_client.dart';
-import '../services/location_service.dart';
-import '../services/network_info.dart';
-import '../services/notification_service.dart';
-import '../utils/context_helper.dart';
+import 'package:sahem/data/datasources/recipe_local_datasource.dart';
+import 'package:sahem/data/datasources/recipe_remote_datasource.dart';
+import 'package:sahem/data/models/recipe_model.dart';
+import 'package:sahem/data/repositories/recipe_repository_impl.dart';
+import 'package:sahem/domain/repositories/recipe_repository.dart';
+import 'package:sahem/domain/usecases/get_favorites.dart';
+import 'package:sahem/domain/usecases/get_suggested_recipes.dart';
+import 'package:sahem/domain/usecases/search_recipes.dart';
+import 'package:sahem/domain/usecases/toggle_favorite.dart';
+import 'package:sahem/presentation/cubits/favorites/favorites_cubit.dart';
+import 'package:sahem/presentation/cubits/home/home_cubit.dart';
+import 'package:sahem/presentation/cubits/search/search_cubit.dart';
+import 'package:sahem/presentation/router/app_router.dart';
+import 'package:sahem/core/constants/api_endpoints.dart';
+import 'package:sahem/core/network/dio_client.dart';
+import 'package:sahem/core/services/location_service.dart';
+import 'package:sahem/core/services/network_info.dart';
+import 'package:sahem/core/services/notification_service.dart';
+import 'package:sahem/core/utils/context_helper.dart';
 
 final sl = GetIt.instance;
 
@@ -79,7 +79,7 @@ void _registerNetwork() {
   }
 
   if (!sl.isRegistered<Connectivity>()) {
-    sl.registerLazySingleton<Connectivity>(() => Connectivity());
+    sl.registerLazySingleton<Connectivity>(Connectivity.new);
   }
 
   if (!sl.isRegistered<NetworkInfo>()) {
@@ -92,15 +92,15 @@ void _registerNetwork() {
 // ── SERVICES ───────────────────────────────────────────────────────────────
 void _registerServices() {
   if (!sl.isRegistered<LocationService>()) {
-    sl.registerLazySingleton<LocationService>(() => LocationService());
+    sl.registerLazySingleton<LocationService>(LocationService.new);
   }
 
   if (!sl.isRegistered<NotificationService>()) {
-    sl.registerLazySingleton<NotificationService>(() => NotificationService());
+    sl.registerLazySingleton<NotificationService>(NotificationService.new);
   }
 
   if (!sl.isRegistered<ContextHelper>()) {
-    sl.registerLazySingleton<ContextHelper>(() => ContextHelper());
+    sl.registerLazySingleton<ContextHelper>(ContextHelper.new);
   }
 }
 
@@ -195,6 +195,6 @@ void _registerCubits() {
 // ── ROUTER ─────────────────────────────────────────────────────────────────
 void _registerRouter() {
   if (!sl.isRegistered<AppRouter>()) {
-    sl.registerLazySingleton<AppRouter>(() => AppRouter());
+    sl.registerLazySingleton<AppRouter>(AppRouter.new);
   }
 }

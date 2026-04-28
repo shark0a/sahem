@@ -3,6 +3,7 @@ import '../../../domain/entities/recipe.dart';
 import '../../../domain/usecases/get_favorites.dart';
 import '../../../domain/usecases/toggle_favorite.dart';
 import 'favorites_state.dart';
+
 class FavoritesCubit extends Cubit<FavoritesState> {
   final GetFavorites _getFavorites;
   final ToggleFavorite _toggleFavorite;

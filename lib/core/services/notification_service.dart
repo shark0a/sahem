@@ -1,6 +1,6 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:sahem/core/constants/app_strings.dart';
 import 'package:workmanager/workmanager.dart';
-import '../constants/app_strings.dart';
 
 @pragma('vm:entry-point')
 void callbackDispatcher() {
@@ -40,16 +40,16 @@ void callbackDispatcher() {
       id,
       title,
       body,
-      NotificationDetails(
+      const NotificationDetails(
         android: AndroidNotificationDetails(
           AppStrings.notificationChannelId,
           AppStrings.notificationChannelName,
           channelDescription: AppStrings.notificationChannelDesc,
           importance: Importance.high,
           priority: Priority.high,
-          color: const Color(0xFFF4A226),
+          // color: Color(0xFFF4A226),
         ),
-        iOS: const DarwinNotificationDetails(
+        iOS: DarwinNotificationDetails(
           presentAlert: true,
           presentBadge: true,
           presentSound: true,

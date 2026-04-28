@@ -10,6 +10,7 @@ import 'package:sahem/presentation/cubits/favorites/favorites_cubit.dart';
 import 'package:sahem/presentation/cubits/favorites/favorites_state.dart';
 
 class MockGetFavorites extends Mock implements GetFavorites {}
+
 class MockToggleFavorite extends Mock implements ToggleFavorite {}
 
 const _recipe = Recipe(
@@ -58,8 +59,7 @@ void main() {
     blocTest<FavoritesCubit, FavoritesState>(
       'emits [FavoritesLoading, FavoritesLoaded] with empty list',
       build: () {
-        when(() => mockGetFavorites())
-            .thenAnswer((_) async => const Right([]));
+        when(() => mockGetFavorites()).thenAnswer((_) async => const Right([]));
         return buildCubit();
       },
       act: (cubit) => cubit.loadFavorites(),
@@ -92,8 +92,7 @@ void main() {
       build: () {
         when(() => mockToggleFavorite(_recipe))
             .thenAnswer((_) async => const Right(false));
-        when(() => mockGetFavorites())
-            .thenAnswer((_) async => const Right([]));
+        when(() => mockGetFavorites()).thenAnswer((_) async => const Right([]));
         return buildCubit();
       },
       act: (cubit) => cubit.removeFromFavorites(_recipe),
