@@ -29,8 +29,8 @@ dependencies:
   geocoding: ^2.1.1
 
   # Notifications
-  flutter_local_notifications: ^16.1.0
-  workmanager: ^0.7.0
+  flutter_local_notifications: ^21.0.0
+  workmanager: ^0.9.0
 
   # UI Utilities
   cached_network_image: ^3.3.0
