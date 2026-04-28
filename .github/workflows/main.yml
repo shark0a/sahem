@@ -50,6 +50,7 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
+        
       - name: Run tests with coverage
         run: flutter test --coverage
 
