@@ -6,8 +6,8 @@ import 'package:sahem/core/errors/failures.dart';
 import 'package:sahem/domain/entities/recipe.dart';
 import 'package:sahem/domain/usecases/get_favorites.dart';
 import 'package:sahem/domain/usecases/toggle_favorite.dart';
-import 'package:sahem/presentation/cubits/favorites/favorites_cubit.dart';
-import 'package:sahem/presentation/cubits/favorites/favorites_state.dart';
+import 'package:sahem/Feature/Favorites/presentation/bloc/favorites_cubit.dart';
+import 'package:sahem/Feature/Favorites/presentation/bloc/favorites_state.dart';
 
 class MockGetFavorites extends Mock implements GetFavorites {}
 

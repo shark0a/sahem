@@ -22,7 +22,7 @@ void main() async {
 
   // 1. Init DI — handles Hive inside, registers all lazy singletons
   await configureDependencies();
-  
+
   // 2. Init Notifications + schedule daily meal reminders
   await sl<NotificationService>().init();
   await sl<NotificationService>().scheduleMealNotifications();

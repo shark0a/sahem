@@ -8,8 +8,8 @@ import 'package:sahem/core/services/network_info.dart';
 import 'package:sahem/core/utils/context_helper.dart';
 import 'package:sahem/domain/entities/recipe.dart';
 import 'package:sahem/domain/usecases/get_suggested_recipes.dart';
-import 'package:sahem/presentation/cubits/home/home_cubit.dart';
-import 'package:sahem/presentation/cubits/home/home_state.dart';
+import 'package:sahem/Feature/Home/presentation/bloc/home_cubit.dart';
+import 'package:sahem/Feature/Home/presentation/bloc/home_state.dart';
 
 class MockGetSuggestedRecipes extends Mock implements GetSuggestedRecipes {}
 class MockLocationService extends Mock implements LocationService {}

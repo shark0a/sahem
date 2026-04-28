@@ -4,11 +4,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:sahem/core/errors/failures.dart';
 import 'package:sahem/domain/entities/recipe.dart';
+import 'package:sahem/domain/usecases/get_suggested_recipes.dart';
 import 'package:sahem/domain/usecases/search_recipes.dart';
-import 'package:sahem/presentation/cubits/search/search_cubit.dart';
-import 'package:sahem/presentation/cubits/search/search_state.dart';
+import 'package:sahem/Feature/Search/presentation/bloc/search_cubit.dart';
+import 'package:sahem/Feature/Search/presentation/bloc/search_state.dart';
 
 class MockSearchRecipes extends Mock implements SearchRecipes {}
+class MockGetSuggestedRecipes extends Mock implements GetSuggestedRecipes {}
 
 const _recipe = Recipe(
   id: '1',
@@ -22,14 +24,16 @@ const _recipe = Recipe(
 
 void main() {
   late MockSearchRecipes mockSearchRecipes;
+  late MockGetSuggestedRecipes mockGetSuggestedRecipes;
 
   setUp(() {
     mockSearchRecipes = MockSearchRecipes();
+    mockGetSuggestedRecipes = MockGetSuggestedRecipes();
   });
 
   group('SearchCubit', () {
     test('initial state is SearchInitial', () {
-      final cubit = SearchCubit(mockSearchRecipes);
+      final cubit = SearchCubit(mockSearchRecipes, mockGetSuggestedRecipes);
       expect(cubit.state, isA<SearchInitial>());
       cubit.close();
     });
@@ -39,7 +43,7 @@ void main() {
       build: () {
         when(() => mockSearchRecipes(any()))
             .thenAnswer((_) async => const Right([_recipe]));
-        return SearchCubit(mockSearchRecipes);
+        return SearchCubit(mockSearchRecipes, mockGetSuggestedRecipes);
       },
       act: (cubit) async {
         cubit.onSearchChanged('spaghetti');
@@ -60,7 +64,7 @@ void main() {
       build: () {
         when(() => mockSearchRecipes(any()))
             .thenAnswer((_) async => const Right([]));
-        return SearchCubit(mockSearchRecipes);
+        return SearchCubit(mockSearchRecipes, mockGetSuggestedRecipes);
       },
       act: (cubit) async {
         cubit.onSearchChanged('xyzabc');
@@ -77,7 +81,7 @@ void main() {
       build: () {
         when(() => mockSearchRecipes(any()))
             .thenAnswer((_) async => const Left(NetworkFailure()));
-        return SearchCubit(mockSearchRecipes);
+        return SearchCubit(mockSearchRecipes, mockGetSuggestedRecipes);
       },
       act: (cubit) async {
         cubit.onSearchChanged('pasta');
@@ -91,7 +95,7 @@ void main() {
 
     blocTest<SearchCubit, SearchState>(
       'emits SearchInitial when empty string is searched',
-      build: () => SearchCubit(mockSearchRecipes),
+      build: () => SearchCubit(mockSearchRecipes, mockGetSuggestedRecipes),
       act: (cubit) async {
         cubit.onSearchChanged('');
         await Future.delayed(const Duration(milliseconds: 600));
@@ -107,7 +111,7 @@ void main() {
       build: () {
         when(() => mockSearchRecipes(any()))
             .thenAnswer((_) async => const Right([_recipe]));
-        return SearchCubit(mockSearchRecipes);
+        return SearchCubit(mockSearchRecipes, mockGetSuggestedRecipes);
       },
       act: (cubit) async {
         cubit.onSearchChanged('pasta');
@@ -124,7 +128,7 @@ void main() {
       build: () {
         when(() => mockSearchRecipes(any()))
             .thenAnswer((_) async => const Right([_recipe]));
-        return SearchCubit(mockSearchRecipes);
+        return SearchCubit(mockSearchRecipes, mockGetSuggestedRecipes);
       },
       act: (cubit) async {
         cubit.onSearchChanged('pasta');

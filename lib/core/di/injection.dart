@@ -4,6 +4,16 @@ import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
+import 'package:sahem/Feature/Favorites/presentation/bloc/favorites_cubit.dart';
+import 'package:sahem/Feature/Home/presentation/bloc/home_cubit.dart';
+import 'package:sahem/Feature/Search/presentation/bloc/search_cubit.dart';
+import 'package:sahem/core/constants/api_endpoints.dart';
+import 'package:sahem/core/network/dio_client.dart';
+import 'package:sahem/core/router/app_router.dart';
+import 'package:sahem/core/services/location_service.dart';
+import 'package:sahem/core/services/network_info.dart';
+import 'package:sahem/core/services/notification_service.dart';
+import 'package:sahem/core/utils/context_helper.dart';
 import 'package:sahem/data/datasources/recipe_local_datasource.dart';
 import 'package:sahem/data/datasources/recipe_remote_datasource.dart';
 import 'package:sahem/data/models/recipe_model.dart';
@@ -13,16 +23,6 @@ import 'package:sahem/domain/usecases/get_favorites.dart';
 import 'package:sahem/domain/usecases/get_suggested_recipes.dart';
 import 'package:sahem/domain/usecases/search_recipes.dart';
 import 'package:sahem/domain/usecases/toggle_favorite.dart';
-import 'package:sahem/presentation/cubits/favorites/favorites_cubit.dart';
-import 'package:sahem/presentation/cubits/home/home_cubit.dart';
-import 'package:sahem/presentation/cubits/search/search_cubit.dart';
-import 'package:sahem/presentation/router/app_router.dart';
-import 'package:sahem/core/constants/api_endpoints.dart';
-import 'package:sahem/core/network/dio_client.dart';
-import 'package:sahem/core/services/location_service.dart';
-import 'package:sahem/core/services/network_info.dart';
-import 'package:sahem/core/services/notification_service.dart';
-import 'package:sahem/core/utils/context_helper.dart';
 
 final sl = GetIt.instance;
 
@@ -178,12 +178,15 @@ void _registerCubits() {
 
   if (!sl.isRegistered<SearchCubit>()) {
     sl.registerFactory<SearchCubit>(
-      () => SearchCubit(sl<SearchRecipes>()),
+      () => SearchCubit(
+        sl<SearchRecipes>(),
+        sl<GetSuggestedRecipes>(),
+      ),
     );
   }
 
   if (!sl.isRegistered<FavoritesCubit>()) {
-    sl.registerFactory<FavoritesCubit>(
+    sl.registerLazySingleton<FavoritesCubit>(
       () => FavoritesCubit(
         sl<GetFavorites>(),
         sl<ToggleFavorite>(),
