@@ -24,6 +24,7 @@ class SearchCubit extends Cubit<SearchState> {
         ? null
         : trimmedCategory;
 
+
     _subscription = _searchController.stream
         .debounceTime(const Duration(milliseconds: 400))
         .distinct()
