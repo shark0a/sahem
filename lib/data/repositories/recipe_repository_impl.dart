@@ -15,6 +15,7 @@ class RecipeRepositoryImpl implements RecipeRepository {
 
   RecipeRepositoryImpl(this._remote, this._local, this._networkInfo);
 
+
   @override
   Future<Either<Failure, List<Recipe>>> getSuggestedRecipes(
       String category) async {
