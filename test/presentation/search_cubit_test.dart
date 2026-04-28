@@ -49,7 +49,7 @@ void main() {
       act: (cubit) async {
         cubit.onSearchChanged('spaghetti');
         // Wait for debounce (400ms) + async op
-        await Future.delayed(const Duration(milliseconds: 600));
+        await Future<void>.delayed(const Duration(milliseconds: 600));
       },
       expect: () => [
         isA<SearchLoading>(),
@@ -69,7 +69,7 @@ void main() {
       },
       act: (cubit) async {
         cubit.onSearchChanged('xyzabc');
-        await Future.delayed(const Duration(milliseconds: 600));
+        await Future<void>.delayed(const Duration(milliseconds: 600));
       },
       expect: () => [
         isA<SearchLoading>(),
@@ -86,7 +86,7 @@ void main() {
       },
       act: (cubit) async {
         cubit.onSearchChanged('pasta');
-        await Future.delayed(const Duration(milliseconds: 600));
+        await Future<void>.delayed(const Duration(milliseconds: 600));
       },
       expect: () => [
         isA<SearchLoading>(),
@@ -99,7 +99,7 @@ void main() {
       build: () => SearchCubit(mockSearchRecipes, mockGetSuggestedRecipes),
       act: (cubit) async {
         cubit.onSearchChanged('');
-        await Future.delayed(const Duration(milliseconds: 600));
+        await Future<void>.delayed(const Duration(milliseconds: 600));
       },
       expect: () => [isA<SearchInitial>()],
       verify: (_) {
@@ -117,7 +117,7 @@ void main() {
       act: (cubit) async {
         cubit.onSearchChanged('pasta');
         cubit.onSearchChanged('pasta'); // same query
-        await Future.delayed(const Duration(milliseconds: 700));
+        await Future<void>.delayed(const Duration(milliseconds: 700));
       },
       verify: (_) {
         verify(() => mockSearchRecipes('pasta')).called(1);
@@ -133,7 +133,7 @@ void main() {
       },
       act: (cubit) async {
         cubit.onSearchChanged('pasta');
-        await Future.delayed(const Duration(milliseconds: 600));
+        await Future<void>.delayed(const Duration(milliseconds: 600));
         cubit.clearSearch();
       },
       expect: () => [

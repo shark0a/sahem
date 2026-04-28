@@ -43,7 +43,6 @@ linter:
     - prefer_final_locals
     - prefer_if_null_operators
     - prefer_null_aware_method_calls
-    - prefer_relative_imports
     - prefer_single_quotes
     - require_trailing_commas
     - sort_child_properties_last

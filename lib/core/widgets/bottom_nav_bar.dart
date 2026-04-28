@@ -87,12 +87,10 @@ class _LiquidNavBarState extends State<_LiquidNavBar>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _blobX; // 0..1 normalised position
-  int _previousIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    _previousIndex = widget.currentIndex;
     _controller = AnimationController(
       duration: const Duration(milliseconds: 420),
       vsync: this,
@@ -112,7 +110,6 @@ class _LiquidNavBarState extends State<_LiquidNavBar>
         CurvedAnimation(parent: _controller, curve: Curves.easeInOutCubic),
       );
       _controller.forward(from: 0);
-      _previousIndex = old.currentIndex;
     }
   }
 

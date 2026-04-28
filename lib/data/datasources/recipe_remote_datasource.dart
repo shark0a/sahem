@@ -10,7 +10,7 @@ class RecipeRemoteDatasource {
 
   Future<List<RecipeModel>> getByCategory(String category) async {
     try {
-      final response = await _dio.get(
+      final response = await _dio.get<dynamic>(
         ApiEndpoints.filterByCategory,
         queryParameters: {ApiEndpoints.paramCategory: category},
       );
@@ -38,7 +38,7 @@ class RecipeRemoteDatasource {
 
   Future<List<RecipeModel>> searchByName(String query) async {
     try {
-      final response = await _dio.get(
+      final response = await _dio.get<dynamic>(
         ApiEndpoints.searchByName,
         queryParameters: {ApiEndpoints.paramSearch: query},
       );
@@ -57,7 +57,7 @@ class RecipeRemoteDatasource {
 
   Future<RecipeModel?> _fetchById(String id) async {
     try {
-      final response = await _dio.get(
+      final response = await _dio.get<dynamic>(
         ApiEndpoints.lookupById,
         queryParameters: {ApiEndpoints.paramId: id},
       );
@@ -71,7 +71,7 @@ class RecipeRemoteDatasource {
 
   Future<RecipeModel?> getById(String id) async {
     try {
-      final response = await _dio.get(
+      final response = await _dio.get<dynamic>(
         ApiEndpoints.lookupById,
         queryParameters: {ApiEndpoints.paramId: id},
       );

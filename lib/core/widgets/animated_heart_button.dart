@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:sahem/core/constants/app_colors.dart';
 
 class AnimatedHeartButton extends StatefulWidget {
