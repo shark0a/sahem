@@ -6,31 +6,30 @@ class HomeLoadingView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return const Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(height: 60),
-        const Padding(
+        SizedBox(height: 60),
+        Padding(
           padding: EdgeInsets.all(20),
           child: ShimmerCard(
             height: 140,
             width: double.infinity,
-            borderRadius: 20,
           ),
         ),
-        const Padding(
+        Padding(
           padding: EdgeInsets.symmetric(horizontal: 20),
           child: ShimmerCard(height: 24, width: 180, borderRadius: 8),
         ),
-        const SizedBox(height: 16),
-        const ShimmerRecipeList(),
-        const SizedBox(height: 24),
-        const Padding(
+        SizedBox(height: 16),
+        ShimmerRecipeList(),
+        SizedBox(height: 24),
+        Padding(
           padding: EdgeInsets.symmetric(horizontal: 20),
           child: ShimmerCard(height: 24, width: 160, borderRadius: 8),
         ),
-        const SizedBox(height: 16),
-        const ShimmerGrid(count: 4),
+        SizedBox(height: 16),
+        ShimmerGrid(),
       ],
     );
   }

@@ -5,7 +5,7 @@ import 'package:rxdart/rxdart.dart';
 
 import 'package:sahem/domain/usecases/get_suggested_recipes.dart';
 import 'package:sahem/domain/usecases/search_recipes.dart';
-import 'search_state.dart';
+import 'package:sahem/Feature/Search/presentation/bloc/search_state.dart';
 
 class SearchCubit extends Cubit<SearchState> {
   final SearchRecipes _searchRecipes;
