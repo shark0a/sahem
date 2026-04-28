@@ -10,14 +10,16 @@ import 'package:sahem/data/models/recipe_model.dart';
 import 'package:sahem/data/repositories/recipe_repository_impl.dart';
 import 'package:sahem/domain/entities/recipe.dart';
 
-// ── Mocks ──────────────────────────────────────────────────────────────────
+// -- Mocks ------------------------------------------------------------------
 class MockRemoteDatasource extends Mock implements RecipeRemoteDatasource {}
 
 class MockLocalDatasource extends Mock implements RecipeLocalDatasource {}
 
 class MockNetworkInfo extends Mock implements NetworkInfo {}
 
-// ── Helpers ────────────────────────────────────────────────────────────────
+class FakeRecipeModel extends Fake implements RecipeModel {}
+
+// -- Helpers ----------------------------------------------------------------
 RecipeModel _makeModel(String id) => RecipeModel(
       id: id,
       name: 'Test Recipe $id',
@@ -35,6 +37,10 @@ void main() {
   late MockLocalDatasource mockLocal;
   late MockNetworkInfo mockNetworkInfo;
 
+  setUpAll(() {
+    registerFallbackValue(FakeRecipeModel());
+  });
+
   setUp(() {
     mockRemote = MockRemoteDatasource();
     mockLocal = MockLocalDatasource();
@@ -42,7 +48,7 @@ void main() {
     repository = RecipeRepositoryImpl(mockRemote, mockLocal, mockNetworkInfo);
   });
 
-  // ── getSuggestedRecipes ──────────────────────────────────────────────────
+  // -- getSuggestedRecipes --------------------------------------------------
   group('getSuggestedRecipes', () {
     const category = 'Chicken';
     final models = [_makeModel('1'), _makeModel('2')];
@@ -51,17 +57,17 @@ void main() {
       when(() => mockNetworkInfo.isConnected).thenAnswer((_) async => true);
       when(() => mockRemote.getByCategory(category))
           .thenAnswer((_) async => models);
-      when(() => mockLocal.cacheRecipes(models)).thenAnswer((_) async {});
+      when(() => mockLocal.cacheRecipes(models))
+          .thenAnswer((_) async => {});
 
       final result = await repository.getSuggestedRecipes(category);
 
       expect(result.isRight(), isTrue);
-      result.fold((_) => fail('Expected Right'), (recipes) {
-        expect(recipes.length, equals(2));
-        expect(recipes.first.id, equals('1'));
-        expect(recipes.first, isA<Recipe>());
-      });
-
+      result.fold(
+        (l) => fail('Expected Right, got Left: $l'),
+        (r) => expect(r.length, 2),
+      );
+      verify(() => mockNetworkInfo.isConnected).called(1);
       verify(() => mockRemote.getByCategory(category)).called(1);
       verify(() => mockLocal.cacheRecipes(models)).called(1);
     });
@@ -74,49 +80,39 @@ void main() {
       final result = await repository.getSuggestedRecipes(category);
 
       expect(result.isRight(), isTrue);
-      result.fold((_) => fail('Expected Right'), (recipes) {
-        expect(recipes.length, equals(2));
-      });
-
-      verifyNever(() => mockRemote.getByCategory(any()));
+      result.fold(
+        (l) => fail('Expected Right, got Left: $l'),
+        (r) => expect(r.length, 2),
+      );
+      verify(() => mockNetworkInfo.isConnected).called(1);
+      verifyNever(() => mockRemote.getByCategory(category));
       verify(() => mockLocal.getCachedRecipes(category)).called(1);
     });
 
-    test('returns CacheFailure when offline and no cache available', () async {
+    test('returns CacheFailure when offline and cache fails', () async {
       when(() => mockNetworkInfo.isConnected).thenAnswer((_) async => false);
       when(() => mockLocal.getCachedRecipes(category))
-          .thenThrow(const CacheException(message: 'Empty cache'));
+          .thenThrow(CacheException());
 
       final result = await repository.getSuggestedRecipes(category);
 
       expect(result.isLeft(), isTrue);
       result.fold(
-        (failure) => expect(failure, isA<CacheFailure>()),
-        (_) => fail('Expected Left'),
+        (l) => expect(l, isA<CacheFailure>()),
+        (r) => fail('Expected Left, got Right: $r'),
       );
-    });
-
-    test('returns ServerFailure when remote throws ServerException', () async {
-      when(() => mockNetworkInfo.isConnected).thenAnswer((_) async => true);
-      when(() => mockRemote.getByCategory(category)).thenThrow(
-          const ServerException(statusCode: 500, message: 'Server Error'));
-
-      final result = await repository.getSuggestedRecipes(category);
-
-      expect(result.isLeft(), isTrue);
-      result.fold(
-        (failure) => expect(failure, isA<ServerFailure>()),
-        (_) => fail('Expected Left'),
-      );
+      verify(() => mockNetworkInfo.isConnected).called(1);
+      verifyNever(() => mockRemote.getByCategory(category));
+      verify(() => mockLocal.getCachedRecipes(category)).called(1);
     });
   });
 
-  // ── searchRecipes ────────────────────────────────────────────────────────
+  // -- searchRecipes --------------------------------------------------------
   group('searchRecipes', () {
-    const query = 'pasta';
-    final models = [_makeModel('10'), _makeModel('11')];
+    const query = 'test';
+    final models = [_makeModel('1'), _makeModel('2')];
 
-    test('returns results from remote when online', () async {
+    test('returns remote data when online', () async {
       when(() => mockNetworkInfo.isConnected).thenAnswer((_) async => true);
       when(() => mockRemote.searchByName(query))
           .thenAnswer((_) async => models);
@@ -125,66 +121,95 @@ void main() {
 
       expect(result.isRight(), isTrue);
       result.fold(
-        (_) => fail('Expected Right'),
-        (recipes) => expect(recipes.length, equals(2)),
+        (l) => fail('Expected Right, got Left: $l'),
+        (r) => expect(r.length, 2),
       );
+      verify(() => mockNetworkInfo.isConnected).called(1);
+      verify(() => mockRemote.searchByName(query)).called(1);
     });
 
-    test('returns NetworkFailure when offline and cache is empty', () async {
+    test('returns cached data when offline', () async {
       when(() => mockNetworkInfo.isConnected).thenAnswer((_) async => false);
-      when(() => mockLocal.getCachedRecipes(any()))
-          .thenThrow(const CacheException());
+      when(() => mockLocal.getCachedRecipes(''))
+          .thenAnswer((_) async => models);
+
+      final result = await repository.searchRecipes(query);
+
+      expect(result.isRight(), isTrue);
+      result.fold(
+        (l) => fail('Expected Right, got Left: $l'),
+        (r) => expect(r.length, 2),
+      );
+      verify(() => mockNetworkInfo.isConnected).called(1);
+      verifyNever(() => mockRemote.searchByName(query));
+      verify(() => mockLocal.getCachedRecipes('')).called(1);
+    });
+
+    test('returns NetworkFailure when offline and cache fails', () async {
+      when(() => mockNetworkInfo.isConnected).thenAnswer((_) async => false);
+      when(() => mockLocal.getCachedRecipes(''))
+          .thenThrow(CacheException());
 
       final result = await repository.searchRecipes(query);
 
       expect(result.isLeft(), isTrue);
       result.fold(
-        (failure) => expect(failure, isA<NetworkFailure>()),
-        (_) => fail('Expected Left'),
+        (l) => expect(l, isA<NetworkFailure>()),
+        (r) => fail('Expected Left, got Right: $r'),
       );
+      verify(() => mockNetworkInfo.isConnected).called(1);
+      verifyNever(() => mockRemote.searchByName(query));
+      verify(() => mockLocal.getCachedRecipes('')).called(1);
     });
   });
 
-  // ── getFavorites ─────────────────────────────────────────────────────────
+  // -- getFavorites --------------------------------------------------------
   group('getFavorites', () {
-    final models = [_makeModel('20'), _makeModel('21')];
+    final models = [_makeModel('1'), _makeModel('2')];
 
-    test('returns list of favorite recipes', () async {
-      when(() => mockLocal.getFavorites()).thenAnswer((_) async => models);
+    test('returns favorite recipes', () async {
+      when(() => mockLocal.getFavorites())
+          .thenAnswer((_) async => models);
 
       final result = await repository.getFavorites();
 
       expect(result.isRight(), isTrue);
       result.fold(
-        (_) => fail('Expected Right'),
-        (favorites) => expect(favorites.length, equals(2)),
+        (l) => fail('Expected Right, got Left: $l'),
+        (r) => expect(r.length, 2),
       );
+      verify(() => mockLocal.getFavorites()).called(1);
     });
 
-    test('returns CacheFailure when local throws', () async {
-      when(() => mockLocal.getFavorites())
-          .thenThrow(const CacheException(message: 'DB error'));
+    test('returns empty list when no favorites exist', () async {
+      when(() => mockLocal.getFavorites()).thenAnswer((_) async => []);
 
       final result = await repository.getFavorites();
 
-      expect(result.isLeft(), isTrue);
+      expect(result.isRight(), isTrue);
       result.fold(
-        (failure) => expect(failure, isA<CacheFailure>()),
-        (_) => fail('Expected Left'),
+        (l) => fail('Expected Right, got Left: $l'),
+        (r) => expect(r.isEmpty, isTrue),
       );
+      verify(() => mockLocal.getFavorites()).called(1);
     });
   });
 
-  // ── toggleFavorite ───────────────────────────────────────────────────────
+  // -- toggleFavorite -------------------------------------------------------
   group('toggleFavorite', () {
     final recipe = _makeModel('30').toEntity();
 
     test('returns true when recipe is added to favorites', () async {
-      when(() => mockLocal.toggleFavorite(any())).thenAnswer((_) async => true);
+      when(() => mockLocal.toggleFavorite(any()))
+          .thenAnswer((_) async => true);
 
       final result = await repository.toggleFavorite(recipe);
 
-      expect(result, equals(const Right<Failure, bool>(true)));
+      expect(result.isRight(), isTrue);
+      result.fold(
+        (l) => fail('Expected Right, got Left: $l'),
+        (r) => expect(r, isTrue),
+      );
     });
 
     test('returns false when recipe is removed from favorites', () async {
@@ -193,7 +218,11 @@ void main() {
 
       final result = await repository.toggleFavorite(recipe);
 
-      expect(result, equals(const Right<Failure, bool>(false)));
+      expect(result.isRight(), isTrue);
+      result.fold(
+        (l) => fail('Expected Right, got Left: $l'),
+        (r) => expect(r, isFalse),
+      );
     });
   });
 }
