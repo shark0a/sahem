@@ -1,63 +1,38 @@
+import 'dart:ui';
+
+import 'package:flutter/widgets.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:sahem/core/constants/app_strings.dart';
 import 'package:workmanager/workmanager.dart';
+
+import '../constants/app_strings.dart';
 
 @pragma('vm:entry-point')
 void callbackDispatcher() {
   Workmanager().executeTask((task, inputData) async {
-    final notificationPlugin = FlutterLocalNotificationsPlugin();
-    const initSettings = InitializationSettings(
-      android: AndroidInitializationSettings('@mipmap/ic_launcher'),
-      iOS: DarwinInitializationSettings(),
-    );
-    await notificationPlugin.initialize(initSettings);
+    DartPluginRegistrant.ensureInitialized();
 
-    String title;
-    String body;
-    int id;
-
-    switch (task) {
-      case AppStrings.workBreakfast:
-        title = AppStrings.breakfastNotificationTitle;
-        body = AppStrings.breakfastNotificationBody;
-        id = 1;
-        break;
-      case AppStrings.workLunch:
-        title = AppStrings.lunchNotificationTitle;
-        body = AppStrings.lunchNotificationBody;
-        id = 2;
-        break;
-      case AppStrings.workDinner:
-        title = AppStrings.dinnerNotificationTitle;
-        body = AppStrings.dinnerNotificationBody;
-        id = 3;
-        break;
-      default:
-        return Future.value(true);
-    }
-
-    await notificationPlugin.show(
-      id,
-      title,
-      body,
-      const NotificationDetails(
-        android: AndroidNotificationDetails(
-          AppStrings.notificationChannelId,
-          AppStrings.notificationChannelName,
-          channelDescription: AppStrings.notificationChannelDesc,
-          importance: Importance.high,
-          priority: Priority.high,
-          // color: Color(0xFFF4A226),
-        ),
-        iOS: DarwinNotificationDetails(
-          presentAlert: true,
-          presentBadge: true,
-          presentSound: true,
-        ),
+    final plugin = FlutterLocalNotificationsPlugin();
+    await plugin.initialize(
+      settings: const InitializationSettings(
+        android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+        iOS: DarwinInitializationSettings(),
       ),
     );
 
-    return Future.value(true);
+    final notification = _notificationForTask(task);
+    if (notification == null) {
+      return true;
+    }
+
+    await plugin.show(
+      id: notification.id,
+      title: notification.title,
+      body: notification.body,
+      notificationDetails: _details(),
+      payload: notification.payload,
+    );
+
+    return true;
   });
 }
 
@@ -65,68 +40,75 @@ class NotificationService {
   final FlutterLocalNotificationsPlugin _plugin =
       FlutterLocalNotificationsPlugin();
 
+  bool _initialized = false;
+  bool _workmanagerInitialized = false;
+
   Future<void> init() async {
-    const initSettings = InitializationSettings(
-      android: AndroidInitializationSettings('@mipmap/ic_launcher'),
-      iOS: DarwinInitializationSettings(
-        requestAlertPermission: true,
-        requestBadgePermission: true,
-        requestSoundPermission: true,
-      ),
-    );
+    if (_initialized) return;
 
     await _plugin.initialize(
-      initSettings,
+      settings: const InitializationSettings(
+        android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+        iOS: DarwinInitializationSettings(
+          requestAlertPermission: true,
+          requestBadgePermission: true,
+          requestSoundPermission: true,
+        ),
+      ),
       onDidReceiveNotificationResponse: _onNotificationTap,
     );
 
-    // Android 13+ permission
     await _plugin
         .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>()
         ?.requestNotificationsPermission();
-  }
 
-  void _onNotificationTap(NotificationResponse response) {
-    // Navigate to home or specific recipe — handled via GoRouter
+    _initialized = true;
   }
 
   Future<void> scheduleMealNotifications() async {
-    await Workmanager().initialize(callbackDispatcher, isInDebugMode: false);
+    if (!_workmanagerInitialized) {
+      await Workmanager().initialize(callbackDispatcher, isInDebugMode: false);
+      _workmanagerInitialized = true;
+    }
 
-    // Breakfast at 08:00 — daily periodic
-    await Workmanager().registerPeriodicTask(
-      AppStrings.workBreakfast,
-      AppStrings.workBreakfast,
-      frequency: const Duration(hours: 24),
-      initialDelay: _delayUntil(hour: 8),
-      constraints: Constraints(networkType: NetworkType.not_required),
-      existingWorkPolicy: ExistingWorkPolicy.replace,
+    await _registerTask(
+      uniqueName: AppStrings.workBreakfast,
+      taskName: AppStrings.workBreakfast,
+      hour: 8,
     );
-
-    // Lunch at 14:00 — daily periodic
-    await Workmanager().registerPeriodicTask(
-      AppStrings.workLunch,
-      AppStrings.workLunch,
-      frequency: const Duration(hours: 24),
-      initialDelay: _delayUntil(hour: 14),
-      constraints: Constraints(networkType: NetworkType.not_required),
-      existingWorkPolicy: ExistingWorkPolicy.replace,
+    await _registerTask(
+      uniqueName: AppStrings.workLunch,
+      taskName: AppStrings.workLunch,
+      hour: 14,
     );
-
-    // Dinner at 19:00 — daily periodic
-    await Workmanager().registerPeriodicTask(
-      AppStrings.workDinner,
-      AppStrings.workDinner,
-      frequency: const Duration(hours: 24),
-      initialDelay: _delayUntil(hour: 19),
-      constraints: Constraints(networkType: NetworkType.not_required),
-      existingWorkPolicy: ExistingWorkPolicy.replace,
+    await _registerTask(
+      uniqueName: AppStrings.workDinner,
+      taskName: AppStrings.workDinner,
+      hour: 19,
     );
   }
 
-  /// Calculates the delay from now until the next occurrence of [hour]:00
-  Duration _delayUntil({required int hour}) {
+  void _onNotificationTap(NotificationResponse response) {
+    // Hook router navigation here if needed.
+  }
+
+  Future<void> _registerTask({
+    required String uniqueName,
+    required String taskName,
+    required int hour,
+  }) async {
+    await Workmanager().registerPeriodicTask(
+      uniqueName,
+      taskName,
+      frequency: const Duration(hours: 24),
+      initialDelay: _delayUntil(hour),
+      constraints: Constraints(networkType: NetworkType.notRequired),
+      existingWorkPolicy: ExistingPeriodicWorkPolicy.replace,
+    );
+  }
+
+  Duration _delayUntil(int hour) {
     final now = DateTime.now();
     var target = DateTime(now.year, now.month, now.day, hour, 0);
     if (target.isBefore(now)) {
@@ -136,8 +118,61 @@ class NotificationService {
   }
 }
 
-// Needed for Android color reference in background isolate
-class Color {
-  final int value;
-  const Color(this.value);
+class _MealNotification {
+  final int id;
+  final String title;
+  final String body;
+  final String payload;
+
+  const _MealNotification({
+    required this.id,
+    required this.title,
+    required this.body,
+    required this.payload,
+  });
+}
+
+_MealNotification? _notificationForTask(String task) {
+  switch (task) {
+    case AppStrings.workBreakfast:
+      return const _MealNotification(
+        id: 1,
+        title: AppStrings.breakfastNotificationTitle,
+        body: AppStrings.breakfastNotificationBody,
+        payload: 'breakfast',
+      );
+    case AppStrings.workLunch:
+      return const _MealNotification(
+        id: 2,
+        title: AppStrings.lunchNotificationTitle,
+        body: AppStrings.lunchNotificationBody,
+        payload: 'lunch',
+      );
+    case AppStrings.workDinner:
+      return const _MealNotification(
+        id: 3,
+        title: AppStrings.dinnerNotificationTitle,
+        body: AppStrings.dinnerNotificationBody,
+        payload: 'dinner',
+      );
+    default:
+      return null;
+  }
+}
+
+NotificationDetails _details() {
+  return const NotificationDetails(
+    android: AndroidNotificationDetails(
+      AppStrings.notificationChannelId,
+      AppStrings.notificationChannelName,
+      channelDescription: AppStrings.notificationChannelDesc,
+      importance: Importance.high,
+      priority: Priority.high,
+    ),
+    iOS: DarwinNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+    ),
+  );
 }
