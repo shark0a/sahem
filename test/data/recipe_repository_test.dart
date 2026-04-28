@@ -57,8 +57,7 @@ void main() {
       when(() => mockNetworkInfo.isConnected).thenAnswer((_) async => true);
       when(() => mockRemote.getByCategory(category))
           .thenAnswer((_) async => models);
-      when(() => mockLocal.cacheRecipes(models))
-          .thenAnswer((_) async => {});
+      when(() => mockLocal.cacheRecipes(models)).thenAnswer((_) async => {});
 
       final result = await repository.getSuggestedRecipes(category);
 
@@ -147,8 +146,7 @@ void main() {
 
     test('returns NetworkFailure when offline and cache fails', () async {
       when(() => mockNetworkInfo.isConnected).thenAnswer((_) async => false);
-      when(() => mockLocal.getCachedRecipes(''))
-          .thenThrow(CacheException());
+      when(() => mockLocal.getCachedRecipes('')).thenThrow(CacheException());
 
       final result = await repository.searchRecipes(query);
 
@@ -168,8 +166,7 @@ void main() {
     final models = [_makeModel('1'), _makeModel('2')];
 
     test('returns favorite recipes', () async {
-      when(() => mockLocal.getFavorites())
-          .thenAnswer((_) async => models);
+      when(() => mockLocal.getFavorites()).thenAnswer((_) async => models);
 
       final result = await repository.getFavorites();
 
@@ -200,8 +197,7 @@ void main() {
     final recipe = _makeModel('30').toEntity();
 
     test('returns true when recipe is added to favorites', () async {
-      when(() => mockLocal.toggleFavorite(any()))
-          .thenAnswer((_) async => true);
+      when(() => mockLocal.toggleFavorite(any())).thenAnswer((_) async => true);
 
       final result = await repository.toggleFavorite(recipe);
 
